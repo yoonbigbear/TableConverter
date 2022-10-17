@@ -1,6 +1,8 @@
 # TableConverter
 Convert excel table to csv file and automatically generate source code
 
+![image](https://user-images.githubusercontent.com/101116747/196241281-526c50df-1b64-4c1b-b094-8d0f921bc582.png)
+
 ## Requirements
 
 [ExcelDataReader](https://github.com/ExcelDataReader/ExcelDataReader), [ExcelDataReader.DataSet](https://www.nuget.org/packages/ExcelDataReader.DataSet/)
