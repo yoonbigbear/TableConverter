@@ -8,4 +8,4 @@ Convert excel table to csv file and automatically generate source code
 ## How to use
 
 - Generated client source code has been tested with Unity 2021.3.1f1.
-- This project was make only for private purpose. Therefore generator contains some uncommon namespaces and types.
+- The original project was not a general purpose. Therefore generator contains some uncommon namespaces and types such as "Global" or "SByte"
