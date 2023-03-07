@@ -54,6 +54,9 @@
 		sw.WriteLine("using System.Collections.Generic;");
 		sw.WriteLine("using System.Data;");
 		sw.WriteLine("using System.IO;");
+		sw.WriteLine("#if UNITY_2021_3_OR_NEWER");
+		sw.WriteLine("using System.Linq;");
+		sw.WriteLine("#endif");
 		sw.WriteLine("using System.Runtime.CompilerServices;");
 		sw.WriteLine("using System.Runtime.InteropServices;");
 		sw.WriteLine("");
@@ -123,6 +126,7 @@
 
 		sw.WriteLine($"		public {mainTable.name}(object[] param)");
 		sw.WriteLine("		{");
+		int num = 0;
 		for (int i = 0; i < columns.Count; ++i)
 		{
 			if (this.target == Target.Server)
@@ -131,12 +135,13 @@
 				{
 					continue;
 				}
-				sw.WriteLine($"			this.{columns[i].ColumnName} = ({columns[i].DataType.Name})param[{i}];");
+				sw.WriteLine($"			this.{columns[i].ColumnName} = ({columns[i].DataType.Name})param[{num}];");
 			}
 			else
 			{
-				sw.WriteLine($"			this.{columns[i].ColumnName.Split(":")[0]} = ({columns[i].DataType.Name})param[{i}];");
+				sw.WriteLine($"			this.{columns[i].ColumnName.Split(":")[0]} = ({columns[i].DataType.Name})param[{num}];");
 			}
+			num++;
 		}
 		sw.WriteLine("		}");
 
@@ -241,18 +246,7 @@
 		sw.WriteLine("						if (headers[i].Split(':').Length > 1)");
 		sw.WriteLine("							continue;");
 		sw.WriteLine("#endif");
-		sw.WriteLine("						var list = rows[i].Split(':');");
-		sw.WriteLine("						//if array");
-		sw.WriteLine("						if (list.Length > 1)");
-		sw.WriteLine("						{");
-		sw.WriteLine("#if UNITY_2021_3_OR_NEWER");
-		sw.WriteLine("							dr[typeIndex] = DataTableManager.ArrayConverter(types[headers[i]].Name, rows[i]);");
-		sw.WriteLine("#else");
-		sw.WriteLine("							dr[typeIndex] = TableData.ArrayConverter(types[headers[i]].Name, rows[i]);");
-		sw.WriteLine("#endif");
-		sw.WriteLine("						}");
-		sw.WriteLine("						else");
-		sw.WriteLine("							dr[typeIndex] = list[0];");
+		sw.WriteLine("						dr[typeIndex] = TableData.ConvertTypes(types[headers[i].Split(':')[0]].Name, rows[i]);");
 		sw.WriteLine("						typeIndex++;");
 		sw.WriteLine("					}");
 		sw.WriteLine("					dt.Rows.Add(dr);");

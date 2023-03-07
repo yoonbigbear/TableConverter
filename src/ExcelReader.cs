@@ -102,22 +102,14 @@ public class ExcelReader
                         }
                         else
                         {
-							ret.body.TryGetValue(rowValue, out var v);
+                            ret.body.TryGetValue(rowValue, out var v);
                             newRow[dataT.DataTable.Columns[j]] = v;
                         }
                     }
                 }
                 else
                 {
-                    if (valueArray.Length > 1)
-                    {
-						//array
-						newRow[dataT.DataTable.Columns[j]] = DataConverter.ConvertTypes(dataT.DataTable.Columns[j].DataType.Name, rowValue);
-                    }
-                    else
-                    {
-                        newRow[dataT.DataTable.Columns[j]] = row[j];
-                    }
+                    newRow[dataT.DataTable.Columns[j]] = DataConverter.ConvertTypes(dataT.DataTable.Columns[j].DataType.Name, rowValue);
                 }
 
             }
