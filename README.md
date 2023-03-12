@@ -1,5 +1,5 @@
 # TableConverter
-Convert excel table to csv file and automatically generate source code
+Convert excel table to csv file and automatically generate source code for Unity and c# server
 
 ![image](https://user-images.githubusercontent.com/101116747/196241281-526c50df-1b64-4c1b-b094-8d0f921bc582.png)
 
