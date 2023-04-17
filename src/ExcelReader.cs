@@ -70,7 +70,7 @@ public class ExcelReader
         {
             key = table.Rows[0][i].ToString().ToLower();
             valuekey = table.Rows[1][i].ToString().ToLower();
-            value = DataConverter.BaseTypes(valuekey);
+            value = DataConverter.BaseTypesCS(valuekey);
             dataT.DataTable.Columns.Add(key, value);
             if (key.Equals("id"))
                 dataT.keyType = value;
@@ -109,7 +109,7 @@ public class ExcelReader
                 }
                 else
                 {
-                    newRow[dataT.DataTable.Columns[j]] = DataConverter.ConvertTypes(dataT.DataTable.Columns[j].DataType.Name, rowValue);
+                    newRow[dataT.DataTable.Columns[j]] = DataConverter.ConvertTypesCS(dataT.DataTable.Columns[j].DataType.Name, rowValue);
                 }
 
             }
@@ -122,7 +122,7 @@ public class ExcelReader
         EnumT enumT = new EnumT();
         enumT.name = table.TableName;
         //First row is data type.
-        enumT.type = DataConverter.BaseTypes(table.Rows[0][1].ToString().ToLower());
+        enumT.type = DataConverter.BaseTypesCS(table.Rows[0][1].ToString().ToLower());
 
         string enumName;
         object value;

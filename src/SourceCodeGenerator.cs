@@ -1,4 +1,4 @@
-﻿public class SourceCodeGenerator
+﻿public class SourceCodeGeneratorCS
 {
 	DataT mainTable = new DataT();
 	List<EnumT> enumTs = new List<EnumT>();
@@ -11,13 +11,13 @@
 
 	Target target = Target.Server;
 
-	public SourceCodeGenerator(DataT mainTable, List<EnumT> enumTs)
+	public SourceCodeGeneratorCS(DataT mainTable, List<EnumT> enumTs)
 	{
 		this.mainTable = mainTable;
 		this.enumTs = enumTs;
 	}
 
-	public void Generate(string outputpath, int target)
+	public void GenerateCs(string outputpath, int target)
 	{
 		this.target = (Target)target;
 
@@ -48,6 +48,7 @@
 		sw.WriteLine("");
 	}
 
+
 	void Using(StreamWriter sw)
 	{
 		sw.WriteLine("using System;");
@@ -67,11 +68,11 @@
 		sw.WriteLine("namespace Data");
 		sw.WriteLine("{");
 		sw.WriteLine("");
-		Enums(sw);
+		//Enums(sw);
 		sw.WriteLine("");
-		DataStruct(sw);
+		//DataStruct(sw);
 		sw.WriteLine("");
-		DataClass(sw);
+		//DataClass(sw);
 		sw.WriteLine("}");
 	}
 

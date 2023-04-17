@@ -4,7 +4,8 @@ using static System.Net.Mime.MediaTypeNames;
 class DataConverter
 {
     static ExcelReader excelReader = new ExcelReader();
-    static SourceCodeGenerator generator;
+    static SourceCodeGeneratorCS generator;
+	static SourceCodeGeneratorCpp generatorcpp;
 
 	static string TableDataPath = string.Empty;
 
@@ -14,7 +15,10 @@ class DataConverter
 	static string ServerCSOutputPath = string.Empty;
 	static string ClientCSOutputPath = string.Empty;
 
-    public static Type BaseTypes(string type)
+    static string ServerCPPOutputPath = string.Empty;
+	static string ClientCPPOutputPath = string.Empty;
+
+	public static Type BaseTypesCS(string type)
     {
         switch (type)
         {
@@ -71,7 +75,7 @@ class DataConverter
         }
     }
 
-    public static object ConvertTypes(string type, string value)
+    public static object ConvertTypesCS(string type, string value)
     {
         var splitValue = value.Split(',');
         switch (type.ToLower())
@@ -201,6 +205,8 @@ class DataConverter
 		System.IO.DirectoryInfo clientCsvDir = new System.IO.DirectoryInfo(ClientCsvOutputPath);
 		System.IO.DirectoryInfo serverCsDir = new System.IO.DirectoryInfo(ServerCSOutputPath);
 		System.IO.DirectoryInfo clientCsDir = new System.IO.DirectoryInfo(ClientCSOutputPath);
+		System.IO.DirectoryInfo serverCppDir = new System.IO.DirectoryInfo(ServerCPPOutputPath);
+		System.IO.DirectoryInfo clientCppDir = new System.IO.DirectoryInfo(ClientCPPOutputPath);
 
 		//clean csv output directories before start
 		if (serverCsvDir.Exists)
@@ -212,6 +218,11 @@ class DataConverter
 			serverCsDir.Delete(true);
 		if (clientCsDir.Exists)
 			clientCsDir.Delete(true);
+
+		if (serverCppDir.Exists)
+			serverCppDir.Delete(true);
+		if (clientCppDir.Exists)
+			clientCppDir.Delete(true);
 
 		foreach (System.IO.FileInfo File in TableDir.GetFiles())
         {
@@ -235,10 +246,13 @@ class DataConverter
 
                 //generate source code
                 Console.WriteLine($"Generate source code....{FileNameOnly}");
-                generator = new SourceCodeGenerator(excelReader.dataT, excelReader.enumTs);
-                generator.Generate($"{ServerCSOutputPath}", 0);
-                generator.Generate($"{ClientCSOutputPath}", 1);
-                Console.WriteLine("done" + "\n");
+                generator = new SourceCodeGeneratorCS(excelReader.dataT, excelReader.enumTs);
+                generator.GenerateCs($"{ServerCSOutputPath}", 0);
+                generator.GenerateCs($"{ClientCSOutputPath}", 1);
+                generatorcpp = new SourceCodeGeneratorCpp(excelReader.dataT, excelReader.enumTs);
+				generatorcpp.Generate($"{ServerCPPOutputPath}", 0);
+				generatorcpp.Generate($"{ClientCPPOutputPath}", 1);
+				Console.WriteLine("done" + "\n");
             }
         }
     }
@@ -272,6 +286,12 @@ class DataConverter
 					if (!json.ContainsKey("ClientCsOutput"))
 						return false;
 					ClientCSOutputPath = (string)json["ClientCsOutput"];
+					if (!json.ContainsKey("ServerCPPOutput"))
+						return false;
+					ServerCPPOutputPath = (string)json["ServerCPPOutput"];
+					if (!json.ContainsKey("ClientCPPOutput"))
+						return false;
+					ClientCPPOutputPath = (string)json["ClientCPPOutput"];
 				}
             }
 		}
