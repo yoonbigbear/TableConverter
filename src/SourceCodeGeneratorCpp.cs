@@ -299,7 +299,14 @@ public class SourceCodeGeneratorCpp
 					sw.WriteLine($"					String token;");
 					sw.WriteLine($"					while (std::getline(ss, token, ':'))");
 					sw.WriteLine($"					{{");
-					sw.WriteLine($"						t.{columns[i].ColumnName}.emplace_back(std::stod(token));");
+					if (columns[i].DataType.Name == "string[]")
+					{
+						sw.WriteLine($"						t.{columns[i].ColumnName}.emplace_back(token);");
+					}
+					else
+					{
+						sw.WriteLine($"						t.{columns[i].ColumnName}.emplace_back(std::stod(token));");
+					}
 					sw.WriteLine($"					}}");
 					sw.WriteLine("				}");
 				}
