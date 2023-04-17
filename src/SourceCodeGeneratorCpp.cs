@@ -256,7 +256,6 @@ public class SourceCodeGeneratorCpp
 
 		sw.WriteLine($"		UnorderedMap<{mainTable.keyType.Name}, {mainTable.name}> {mainTable.name}s;");
 		sw.WriteLine($"");
-		sw.WriteLine($"		Vector<{mainTable.name}> {mainTable.name}List;");
 		sw.WriteLine($"		bool HasKey({mainTable.keyType.Name} id)");
 		sw.WriteLine("	{");
 		sw.WriteLine($"		return {mainTable.name}s.contains(id);");
@@ -275,8 +274,8 @@ public class SourceCodeGeneratorCpp
 	{
 		sw.WriteLine("		virtual void Load(String path)");
 		sw.WriteLine("		{");
-		sw.WriteLine("			CSVReader reader(path);");
-		sw.WriteLine("			for (CSVRow& row : reader)");
+		sw.WriteLine("			CsvParser reader(path);");
+		sw.WriteLine("			for (auto& row : reader)");
 		sw.WriteLine("			{");
 		sw.WriteLine($"				{mainTable.name} t;");
 		
