@@ -22,14 +22,18 @@ class DataConverter
     {
         switch (type)
         {
-            case "byte":
-                return typeof(System.Byte);
-            case "byte[]":
-                return typeof(System.Byte[]);
-            case "ubyte":
+			case "int8":
+				return typeof(System.SByte);
+			case "uint8":
+				return typeof(System.Byte);
+			case "byte":
                 return typeof(System.SByte);
-            case "ubyte[]":
+            case "byte[]":
                 return typeof(System.SByte[]);
+            case "ubyte":
+                return typeof(System.Byte);
+            case "ubyte[]":
+                return typeof(System.Byte[]);
             case "short":
                 return typeof(System.Int16);
             case "short[]":
@@ -80,14 +84,35 @@ class DataConverter
         var splitValue = value.Split(',');
         switch (type.ToLower())
         {
-            case "byte[]":
+			case "uint8[]":
+				{
+					byte[] arr = new byte[splitValue.Length];
+					for (int i = 0; i < arr.Length; i++)
+						arr[i] = Convert.ToByte(splitValue[i]);
+					return arr;
+				}
+			case "int8[]":
+				{
+					sbyte[] arr = new sbyte[splitValue.Length];
+					for (int i = 0; i < arr.Length; i++)
+						arr[i] = Convert.ToSByte(splitValue[i]);
+					return arr;
+				}
+			case "byte[]":
                 {
                     byte[] arr = new byte[splitValue.Length];
                     for (int i = 0; i < arr.Length; i++)
                         arr[i] = Convert.ToByte(splitValue[i]);
                     return arr;
                 }
-            case "int16[]":
+			case "sbyte[]":
+				{
+					sbyte[] arr = new sbyte[splitValue.Length];
+					for (int i = 0; i < arr.Length; i++)
+						arr[i] = Convert.ToSByte(splitValue[i]);
+					return arr;
+				}
+			case "int16[]":
                 {
                     Int16[] arr = new Int16[splitValue.Length];
                     for (int i = 0; i < arr.Length; i++)
@@ -152,13 +177,19 @@ class DataConverter
                         arr[i] = Convert.ToBoolean(splitValue[i]);
                     return arr;
                 }
-            case "byte":
+			case "int8":
+				return Convert.ToSByte(value);
+			case "uint8":
+				return Convert.ToByte(value);
+			case "sbyte":
+				return Convert.ToSByte(value);
+			case "byte":
                 return Convert.ToByte(value);
             case "ubyte":
-                return Convert.ToSByte(value);
+                return Convert.ToByte(value);
             case "short":
                 return Convert.ToInt16(value);
-			case "Int16":
+			case "int16":
 				return Convert.ToInt16(value);
 			case "ushort":
                 return Convert.ToUInt16(value);

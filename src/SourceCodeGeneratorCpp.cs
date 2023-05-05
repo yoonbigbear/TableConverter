@@ -59,7 +59,9 @@ public class SourceCodeGeneratorCpp
 					return "Vector<double>";
 				}
 			case "string[]":
-				return "Vector<String>";
+				{
+					return "Vector<String>";
+				}
 			case "bool[]":
 				{
 					return "Vector<bool>";
@@ -183,7 +185,10 @@ public class SourceCodeGeneratorCpp
 	{
 		sw.WriteLine("#pragma once");
 		sw.WriteLine("#include \"types.h\"");
+		sw.WriteLine("#pragma warning(push)");
+		sw.WriteLine("#pragma warning(disable : 4996)");
 		sw.WriteLine("#include \"csv_parser.h\"");
+		sw.WriteLine("#pragma warning(pop)");
 	}
 
 	void NamespaceCpp(StreamWriter sw)
@@ -203,7 +208,7 @@ public class SourceCodeGeneratorCpp
 	{
 		foreach (EnumT t in enumTs)
 		{
-			sw.WriteLine($"	enum {t.name} : {t.type.Name}");
+			sw.WriteLine($"	enum class {t.name} : {t.type.Name}");
 			sw.WriteLine("	{");
 			sw.WriteLine($"		None = 0,");
 			foreach (var e in t.body)
@@ -252,18 +257,15 @@ public class SourceCodeGeneratorCpp
 	{
 		sw.WriteLine($"	class {mainTable.name}Table");
 		sw.WriteLine("	{");
-		sw.WriteLine("	public:");
+		sw.WriteLine("	private:");
 
 		sw.WriteLine($"		UnorderedMap<{mainTable.keyType.Name}, {mainTable.name}> {mainTable.name}s;");
 		sw.WriteLine($"");
-		sw.WriteLine($"		bool HasKey({mainTable.keyType.Name} id)");
-		sw.WriteLine("	{");
-		sw.WriteLine($"		return {mainTable.name}s.contains(id);");
-		sw.WriteLine("	}");
-		sw.WriteLine($"		{mainTable.name}& operator[]({mainTable.keyType.Name} id)");
-		sw.WriteLine("	{");
-		sw.WriteLine($"		return {mainTable.name}s[id];");
-		sw.WriteLine("	}");
+		sw.WriteLine("	public:");
+		sw.WriteLine($"		const auto& All() {{ return {mainTable.name}s; }}");
+		sw.WriteLine($"		const auto& Get(Int32 id) {{ return {mainTable.name}s[id]; }}");
+		sw.WriteLine($"		bool HasKey({mainTable.keyType.Name} id) {{ return {mainTable.name}s.contains(id); }}");
+		sw.WriteLine($"		{mainTable.name}& operator[]({mainTable.keyType.Name} id) {{ return {mainTable.name}s.at(id); }}");
 		sw.WriteLine($"");
 		LoadFunc(sw);
 		sw.WriteLine($"");
@@ -272,9 +274,9 @@ public class SourceCodeGeneratorCpp
 
 	void LoadFunc(StreamWriter sw)
 	{
-		sw.WriteLine("		virtual void Load(String path)");
+		sw.WriteLine("		virtual void Load(StringView path)");
 		sw.WriteLine("		{");
-		sw.WriteLine("			CsvParser reader(path);");
+		sw.WriteLine("			CsvParser reader(path.data());");
 		sw.WriteLine("			for (auto& row : reader)");
 		sw.WriteLine("			{");
 		sw.WriteLine($"				{mainTable.name} t;");
@@ -319,7 +321,7 @@ public class SourceCodeGeneratorCpp
 				var split = columns[i].ColumnName.Split(":");
 				if (split.Length > 1)
 				{
-					sw.WriteLine($"				t.{split[0]} = row[\"{split[0]}\"].get<{ConvertTypesCpp(columns[i].DataType.Name)}>();");
+					sw.WriteLine($"				t.{split[0]} = row[\"{columns[i].ColumnName}\"].get<{ConvertTypesCpp(columns[i].DataType.Name)}>();");
 				}
 				else
 				{
@@ -327,8 +329,9 @@ public class SourceCodeGeneratorCpp
 				}
 			}
 
-
 		}
+		sw.WriteLine($"					{mainTable.name}s[t.id] = std::move(t);");
+
 
 		sw.WriteLine("			}");
 		sw.WriteLine("		}");
